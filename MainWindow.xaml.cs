@@ -3,7 +3,9 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,6 +24,7 @@ using TwitchBotV2.Model.Twitch;
 using TwitchBotV2.Model.Twitch.EventArgs;
 using TwitchBotV2.Model.Twitch.Utils;
 using TwitchBotV2.Model.UserScript.Actions;
+using TwitchBotV2.Model.Utils;
 
 namespace TwitchBotV2
 {
@@ -160,19 +163,9 @@ namespace TwitchBotV2
                     PleaseWaitGrid.Visibility = Visibility.Collapsed;
                     FullWindowBanner.Visibility = Visibility.Collapsed;
                     InitBotLogic();
+                    MainTabControl.SelectedIndex = 0;
                 });
-                Task.Run(async () => {
-                    var newest = await VersionControl.CheckVersion();
-                    if (newest != null)
-                    {
-                        MyAppExt.InvokeUI(() =>
-                        {
-                            PleaseWaitGrid.Visibility = Visibility.Visible;
-                            FullWindowBanner.Visibility = Visibility.Visible;
-                            WaitLabel.Content = "Обнаружена новая версия, происходит обновление...";
-                        });
-                    }
-                });
+                Task.Run(async ()=> await VersionControl.CheckVersion());
             }
             else Process.Start(new ProcessStartInfo(TwitchConsts.GetAuthURL()) { UseShellExecute = true });
         }

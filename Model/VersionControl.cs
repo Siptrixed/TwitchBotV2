@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using TwitchBotV2.Model.Utils;
 
 namespace TwitchBotV2.Model
 {
     public static class VersionControl
     {
-        public const string AppRepository = "Siptrixed/SE-BlueprintEditor";
+        public const string AppRepository = "Siptrixed/TwitchBotV2";
         public static string? Version => System.Reflection.Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
-        public static async Task<VersionInfo?> CheckVersion()
+        public static async Task<VersionInfo?> CheckVersion(bool silentUpdate = false)
         {
             
             using (var client = new HttpClient())
@@ -38,6 +42,19 @@ namespace TwitchBotV2.Model
                                 if (CheckIsCorrectOS(NewVer.Name)) 
                                 {
                                     NewVer.DownloadURL = asset["browser_download_url"];
+                                    if (silentUpdate)
+                                    {
+                                        if (File.Exists("Updater.exe"))
+                                        {
+                                            RunUpdater();
+                                        }
+                                        else
+                                        {
+                                            WebClient web = new WebClient();
+                                            web.DownloadFileAsync(new Uri("https://github.com/ScriptedEngineer/AutoUpdater/releases/download/1.0.0.2/Updater.exe"), "Updater.exe");
+                                            web.DownloadFileCompleted += (x, e) => RunUpdater();
+                                        }
+                                    }
                                     return NewVer;
                                 }
                             }
@@ -47,12 +64,18 @@ namespace TwitchBotV2.Model
             }
             return null;
         }
+
+        public static void RunUpdater(string updater = "Updater.exe")
+        {
+            Process.Start(updater, $"/DarkTheme /GitHub \"{AppRepository}\" /RunApp \"{ObjectFileSystem.AppFile}\" /JustDownload");
+            Application.Current.Shutdown();
+        }
         private static bool CheckIsCorrectOS(string PackName)
         {
             PackName = PackName.ToLower();
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                if (!PackName.Contains("Win")) return false;
+                if (!PackName.Contains("win")) return false;
                 if (RuntimeInformation.OSArchitecture == Architecture.X86)
                 {
                     if (!PackName.Contains("x86") && !PackName.Contains("32bit")) return false;

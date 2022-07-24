@@ -11,7 +11,7 @@
         Title="TwitchBotV2" Height="300" Width="600" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Border BorderBrush="Gray" BorderThickness="0" CornerRadius="0" >
         <Grid Visibility="Visible">
-            <TabControl SelectedIndex="0" MouseDown="Window_MouseDown" Padding="0,0,0,0">
+            <TabControl x:Name="MainTabControl"  MouseDown="Window_MouseDown" Padding="0,0,0,0" SelectedIndex="0">
                 <TabItem IsEnabled="False" Padding="6,2,6,2" >
                     <TabItem.Style>
                         <Style TargetType="TabItem">
@@ -154,7 +154,7 @@
                     <Button x:Name="LoginButton" Content="Войти" HorizontalAlignment="Left" Margin="120,10,10,10" VerticalAlignment="Center" Padding="5,0,5,1" Click="Login_Click" Height="19" Grid.Column="1"/>
                 </Grid>
                 <Grid x:Name="PleaseWaitGrid" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <ProgressBar HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="21" IsIndeterminate="True" />
+                    <ProgressBar x:Name="HeaderProgressBar" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="21" IsIndeterminate="True" Margin="0,0,40,0" />
                     <Label x:Name="WaitLabel" Content="Загрузка..." HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Grid>
                 <Rectangle VerticalAlignment="Top" Height="21" Stroke="#FF4F4F4F" Margin="0,0,0,0" MouseDown="Window_MouseDown" Fill="#19191919"/>
