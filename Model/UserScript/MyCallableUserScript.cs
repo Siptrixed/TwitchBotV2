@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TwitchBotV2.Model.Twitch;
 using TwitchBotV2.Model.Twitch.EventArgs;
@@ -15,27 +16,30 @@ namespace TwitchBotV2.Model.UserScript
         public bool IsEmpty => Actions.Count == 0;
         public List<MyScriptActionBase> Actions { get; set; } = new List<MyScriptActionBase>();
         public bool IsAsync { get; set; } = false;
-        public void Invoke(TwitchClient client)
+        public void Invoke(TwitchClient client, RewardEventArgs Redeem)
         {
             Task.Run(() =>
             {
+                Queue.Add(Redeem);
                 if (IsAsync)
                 {
-                    Invoker(client);
+                    Invoker(client, Redeem);
                 }
                 else lock (this)
                     {
-                        Invoker(client);
+                        Invoker(client, Redeem);
                     }
+                Queue.Remove(Redeem);
             });
         }
         [MessagePack.IgnoreMember]
-        public RewardEventArgs Redeem;
-        private void Invoker(TwitchClient client)
+        public static List<RewardEventArgs> Queue = new List<RewardEventArgs>();
+        private void Invoker(TwitchClient client, RewardEventArgs Redeem)
         {
+            if (Redeem.IsRemoved) return;
             foreach (var act in Actions)
             {
-                act.Invoke(this,client);
+                act.Invoke(this, client, Redeem);
             }
         }
     }

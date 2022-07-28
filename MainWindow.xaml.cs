@@ -23,8 +23,10 @@ using TwitchBotV2.Model.Localhost;
 using TwitchBotV2.Model.Twitch;
 using TwitchBotV2.Model.Twitch.EventArgs;
 using TwitchBotV2.Model.Twitch.Utils;
+using TwitchBotV2.Model.UserScript;
 using TwitchBotV2.Model.UserScript.Actions;
 using TwitchBotV2.Model.Utils;
+using TwitchBotV2.Model.WinApi;
 
 namespace TwitchBotV2
 {
@@ -40,15 +42,50 @@ namespace TwitchBotV2
         {
             InitializeComponent();
             WebServer.RunServer();
-            InitAuthorization();
             tbi.Icon = Properties.Resources.Icon;
             tbi.ToolTipText = "TwitchBotV2";
             tbi.TrayLeftMouseUp += (x, y) => { Show(); Activate(); };
             Application.Current.Exit += (x, y) => tbi.Dispose();
             Settings_MinimizeToTray.IsChecked = GlobalModel.Settings.MinimizeToTray;
-            MyBorder.Visibility = Visibility.Visible;
             RewardScriptActionEditGrid.Visibility = Reward_ScriptActions.Visibility 
                 = RewardEditGrid.Visibility = Visibility.Hidden;
+            VersionLabel.Content = $"v{VersionControl.Version}";
+            FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Visible;
+            HotkeySelector1.Text = GlobalModel.Settings.ISSHotkey.ToString();
+            Task.Run(async () => {
+                var version = await VersionControl.CheckVersion();
+                if (version != null)
+                {
+                    var success = await VersionControl.DownloadUpdateAsync(version);
+                    if (success)
+                    {
+                        if (!VersionControl.UpdateNow())
+                        {
+                            MyAppExt.InvokeUI(() =>
+                            {
+                                FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
+                                InitAuthorization();
+                            });
+                        }
+                    }
+                    else
+                    {
+                        MyAppExt.InvokeUI(() =>
+                        {
+                            FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
+                            InitAuthorization();
+                        });
+                    }
+                }
+                else
+                {
+                    MyAppExt.InvokeUI(() =>
+                    {
+                        FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
+                        InitAuthorization();
+                    });
+                }
+            });
         }
         #endregion
 
@@ -63,18 +100,32 @@ namespace TwitchBotV2
             if (GlobalModel.Settings.CustomRewards.ContainsKey(e.CustomRewardID))
             {
                 var script = GlobalModel.Settings.CustomRewards[e.CustomRewardID].Script;
-                script.Redeem = e;
-                script.Invoke(Client);
+                script.Invoke(Client, e);
             }
         }
 
         private void TwitchMessageRemoved(object? sender, MessageRemovedEventArgs e)
         {
-
+            foreach (var redeem in MyCallableUserScript.Queue)
+            {
+                if (redeem.LinkedMessage != null && redeem.LinkedMessage.ID == e.MessageID)
+                {
+                    redeem.IsRemoved = true;
+                    break;
+                }
+            }
         }
 
         private void TwitchMessageNew(object? sender, MessageRecivedEventArgs e)
         {
+            foreach (var redeem in MyCallableUserScript.Queue)
+            {
+                if (redeem.CustomRewardID == e.CustomRewardID && e.UserID == redeem.UserID && redeem.LinkedMessage == null)
+                {
+                    redeem.LinkedMessage = e;
+                    break;
+                }
+            }
             if (e.Message == "Ping") Client.SendMessage("Pong");
         }
 
@@ -160,12 +211,10 @@ namespace TwitchBotV2
             {
                 MyAppExt.InvokeUI(() =>
                 {
-                    PleaseWaitGrid.Visibility = Visibility.Collapsed;
-                    FullWindowBanner.Visibility = Visibility.Collapsed;
+                    FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
                     InitBotLogic();
                     MainTabControl.SelectedIndex = 0;
                 });
-                Task.Run(async ()=> await VersionControl.CheckVersion());
             }
             else Process.Start(new ProcessStartInfo(TwitchConsts.GetAuthURL()) { UseShellExecute = true });
         }
@@ -269,6 +318,7 @@ namespace TwitchBotV2
                     }
                     RewInf.Value.Script.Actions.Add(NewAction);
                     Reward_ScriptActions.ItemsSource = RewInf.Value.Script.Actions;
+                    Reward_ScriptActions.SelectedIndex = RewInf.Value.Script.Actions.Count - 1;
                 }
                 Reward_ActionAdder.SelectedIndex = -1;
             }
@@ -387,6 +437,7 @@ namespace TwitchBotV2
                             RewardAudioActionText.Text = audio2Message.Text;
                             RewardAudioActionVolume.Value = audio2Message.Volume;
                             RewardAudioActionText.IsEnabled = false;
+                            RewardAudioActionText.Height = 20;
                             RewardAudioActionFileSelector.Visibility = Visibility.Visible;
                             RewardActionEditTypeTab.SelectedIndex = 2;
                             RewardActionVoiceGrid.Visibility = Visibility.Collapsed;
@@ -399,6 +450,7 @@ namespace TwitchBotV2
                             RewardAudioActionText.Text = audio0Message.Text;
                             RewardAudioActionVolume.Value = audio0Message.Volume;
                             RewardAudioActionText.IsEnabled = true;
+                            RewardAudioActionText.Height = 36;
                             RewardAudioActionFileSelector.Visibility = Visibility.Collapsed;
                             RewardActionEditTypeTab.SelectedIndex = 2;
                             RewardActionVoice.Visibility = Visibility.Hidden;
@@ -413,6 +465,7 @@ namespace TwitchBotV2
                             RewardAudioActionText.Text = audio1Message.Text;
                             RewardAudioActionVolume.Value = audio1Message.Volume;
                             RewardAudioActionText.IsEnabled = true;
+                            RewardAudioActionText.Height = 36;
                             RewardAudioActionFileSelector.Visibility = Visibility.Collapsed;
                             RewardActionEditTypeTab.SelectedIndex = 2;
                             RewardActionVoice.Visibility = Visibility.Visible;
@@ -538,7 +591,7 @@ namespace TwitchBotV2
         {
             if (Reward_ScriptActions?.SelectedItem is AudioActions act)
             {
-                act.Rate = (byte)e.NewValue;
+                act.Rate = (int)e.NewValue;
             }
         }
 
@@ -548,6 +601,64 @@ namespace TwitchBotV2
             {
                 act.Voice = (TrueTTSVoices)RewardActionVoice.SelectedIndex;
             }
+        }
+
+        private void TextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.LeftShift || e.Key == Key.RightShift) keyMode = 2;
+            if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl) keyMode = 1;
+        }
+        int keyMode = -1;
+        private void TextBox_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.LeftShift || e.Key == Key.RightShift
+            || e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl
+            || e.Key == Key.LeftAlt || e.Key == Key.RightAlt) keyMode = -1;
+            else
+            {
+                Key key = e.Key;
+                if (key == Key.System)
+                {
+                    key = e.SystemKey;
+                    keyMode = 0;
+                }
+                else if (keyMode == 0)
+                    keyMode = -1;
+
+                string mode = "";
+                try
+                {
+                    switch (keyMode)
+                    {
+                        case 0:
+                            mode = "Alt+";
+                            GlobalModel.SetISSHotkey(key, KeyModifier.Alt);
+                            break;
+                        case 1:
+                            mode = "Ctrl+";
+                            GlobalModel.SetISSHotkey(key, KeyModifier.Ctrl);
+                            break;
+                        case 2:
+                            mode = "Shift+";
+                            GlobalModel.SetISSHotkey(key, KeyModifier.Shift);
+                            break;
+                        default:
+                            GlobalModel.SetISSHotkey(key, KeyModifier.None);
+                            break;
+                    }
+                    ((TextBox)sender).Text = (mode) + key;
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            GlobalModel.ClearISSHotKey();
+            HotkeySelector1.Text = "";
         }
     }
     #endregion

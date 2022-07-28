@@ -12,7 +12,6 @@ namespace TwitchBotV2.Model.UserScript.Actions
         filipp,
         alyss,
         jane,
-        oksana,
         omazh,
         zahar,
         ermil

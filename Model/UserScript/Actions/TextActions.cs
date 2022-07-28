@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TwitchBotV2.Model.Twitch;
+using TwitchBotV2.Model.Twitch.EventArgs;
+using TwitchBotV2.Model.Utils;
 
 namespace TwitchBotV2.Model.UserScript.Actions
 {
@@ -16,15 +18,15 @@ namespace TwitchBotV2.Model.UserScript.Actions
             Type = type;
         }
         public string Text { get; set; }
-        public override void Invoke(MyCallableUserScript context, TwitchClient client)
+        public override void Invoke(MyCallableUserScript context, TwitchClient client, RewardEventArgs Redeem)
         {
             switch (Type)
             {
                 case MyScriptActionType.SendMessage:
-                    client.SendMessage(ComposeText(context, Text));
+                    client.SendMessage(ComposeText(context, Text, Redeem));
                     break;
                 case MyScriptActionType.ShellComand:
-                    MyAppExt.RunCMD(ComposeText(context, Text));
+                    MyAppExt.RunCMD(ComposeText(context, Text, Redeem));
                     break;
             }
         }

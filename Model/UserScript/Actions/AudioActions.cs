@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TwitchBotV2.Model.Twitch;
+using TwitchBotV2.Model.Twitch.EventArgs;
 using TwitchBotV2.Model.Utils;
 
 namespace TwitchBotV2.Model.UserScript.Actions
@@ -23,7 +24,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
             Text = text;
             Type = type;
         }
-        public override void Invoke(MyCallableUserScript context, TwitchClient client)
+        public override void Invoke(MyCallableUserScript context, TwitchClient client, RewardEventArgs Redeem)
         {
             switch (Type)
             {
@@ -35,7 +36,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
                             AudioHelper.SpeechSynth.Rate = Rate;
                             AudioHelper.SpeechSynth.Volume = Volume;
                         });
-                        AudioHelper.TextToSpeech(ComposeText(context, Text));
+                        AudioHelper.TextToSpeech(ComposeText(context, Text, Redeem));
                         do
                         {
                             Thread.Sleep(100);
@@ -50,7 +51,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
                             AudioHelper.SpeechSynth.Rate = Rate;
                             AudioHelper.Player.Volume = Volume / 100d;
                         });
-                        var text = ComposeText(context, Text);
+                        var text = ComposeText(context, Text, Redeem);
                         AudioHelper.GetTrueTTSReady(text, Voice.ToString());
                         AudioHelper.TrueTTS(text);
                     }
@@ -64,8 +65,12 @@ namespace TwitchBotV2.Model.UserScript.Actions
                             AudioHelper.Player.Open(new Uri(Text, UriKind.Absolute));
                             AudioHelper.Player.Play();
                         });
-                        Thread.Sleep(1200);
-                        Thread.Sleep(AudioHelper.MediaDurationMs);
+                        Thread.Sleep(1000);
+                        do
+                        {
+                            Thread.Sleep(100);
+                        }
+                        while (AudioHelper.PlayerIsPlaying);
                         MyAppExt.InvokeUI(()=> AudioHelper.Player.Close());
                     }
                     break;

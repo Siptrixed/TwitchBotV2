@@ -9,10 +9,10 @@
     WindowStyle="None"
     Padding="0"
         Title="TwitchBotV2" Height="300" Width="600" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
-    <Border BorderBrush="Gray" BorderThickness="0" CornerRadius="0" >
+    <Border BorderBrush="#FF4F4F4F" BorderThickness="1" CornerRadius="0" >
         <Grid Visibility="Visible">
-            <TabControl x:Name="MainTabControl"  MouseDown="Window_MouseDown" Padding="0,0,0,0" SelectedIndex="0">
-                <TabItem IsEnabled="False" Padding="6,2,6,2" >
+            <TabControl x:Name="MainTabControl"  MouseDown="Window_MouseDown" SelectedIndex="0" Margin="-1,-1,-1,-1">
+                <TabItem Padding="6,2,6,2" >
                     <TabItem.Style>
                         <Style TargetType="TabItem">
                             <Setter Property="Template">
@@ -24,9 +24,13 @@
                             </Setter>
                         </Style>
                     </TabItem.Style>
-                </TabItem>
-                <TabItem Header="Награды" Padding="5,0,5,0" Margin="-1,1,0,0">
                     <Grid>
+                        <Label Content="Добро пожаловать" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Награды" Padding="5,0,5,0" Margin="-1,1,0,0" IsSelected="True">
+                    <Grid Margin="-2,0,-1,-2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="2*"/>
@@ -42,7 +46,7 @@
                         <Button x:Name="RewardListUpdateButton" Content="Обновить" HorizontalAlignment="Right" Margin="0,2,0,0" VerticalAlignment="Top" Padding="3,0,3,1" Height="19" Click="UpdateRewardButtonClick"/>
                         <Label x:Name="Reward_ID" Content=""  Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="0,0,0,0" Margin="0,0,10,0" FontWeight="Normal" FontStyle="Normal" IsEnabled="False"/>
                         <Rectangle Height="20" VerticalAlignment="Top" Fill="#CC191919" HorizontalAlignment="Stretch" Grid.Column="1"/>
-                        <Grid x:Name="RewardEditGrid" Grid.ColumnSpan="2" Margin="0,20,0,0" Grid.Column="1">
+                        <Grid x:Name="RewardEditGrid" Grid.ColumnSpan="2" Margin="0,20,0,-1" Grid.Column="1">
                             <Label x:Name="Reward_Title" Content="" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
                             <TextBlock x:Name="Reward_Prompt" Margin="10,18,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="32"/>
                             <Label x:Name="Reward_Cost" Content="" HorizontalAlignment="Right" Margin="10,0,10,0" VerticalAlignment="Top" Padding="0,0,0,0"/>
@@ -81,9 +85,9 @@
                                     </TabItem>
                                     <TabItem Margin="0,0,0,0" Height="0" Width="0">
                                         <Grid Margin="-2,-2,-2,-2">
-                                            <TextBox x:Name="RewardAudioActionText" Margin="10,25,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="18" IsEnabled="False" LostFocus="RewardActionSaveButton_Click" TextChanged="RewardAudioActionText_TextChanged"/>
-                                            <Button x:Name="RewardAudioActionFileSelector" Content="..." HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,25,10,0" Width="20" Height="18" Click="Button_Click_4"/>
-                                            <Label Content="Volume" HorizontalAlignment="Right" Margin="0,82,20,0" VerticalAlignment="Top" Padding="0,0,0,0" MouseDown="Label_MouseDown" Height="16" RenderTransformOrigin="0.5,0.5" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Width="40">
+                                            <TextBox x:Name="RewardAudioActionText" Margin="10,25,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="36" IsEnabled="False" LostFocus="RewardActionSaveButton_Click" TextChanged="RewardAudioActionText_TextChanged"/>
+                                            <Button x:Name="RewardAudioActionFileSelector" Content="..." HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,25,10,0" Width="20" Height="20" Click="Button_Click_4"/>
+                                            <Label Content="Volume" HorizontalAlignment="Right" Margin="0,87,20,0" VerticalAlignment="Top" Padding="0,0,0,0" MouseDown="Label_MouseDown" Height="16" RenderTransformOrigin="0.5,0.5" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Width="40">
                                                 <Label.RenderTransform>
                                                     <TransformGroup>
                                                         <ScaleTransform/>
@@ -93,26 +97,25 @@
                                                     </TransformGroup>
                                                 </Label.RenderTransform>
                                             </Label>
-                                            <Slider x:Name="RewardAudioActionVolume" HorizontalAlignment="Right" Margin="0,60,10,0" VerticalAlignment="Top" Orientation="Vertical" Height="60" Width="18" Maximum="100" ValueChanged="RewardAudioActionVolume_ValueChanged" Minimum="1" Value="50"/>
-                                            <Grid x:Name="RewardActionVoiceGrid"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,50,50,0" Visibility="Visible">
-                                            <Label Content="Speed" HorizontalAlignment="Right" Margin="0,32,20,0" VerticalAlignment="Top" Padding="0,0,0,0" MouseDown="Label_MouseDown" Height="16" RenderTransformOrigin="0.5,0.5" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Width="40">
-                                                <Label.RenderTransform>
-                                                    <TransformGroup>
-                                                        <ScaleTransform/>
-                                                        <SkewTransform/>
-                                                        <RotateTransform Angle="-90"/>
-                                                        <TranslateTransform X="0" Y="0"/>
-                                                    </TransformGroup>
-                                                </Label.RenderTransform>
-                                            </Label>
-                                            <Slider x:Name="RewardAudioActionRate" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Orientation="Vertical" Height="60" Width="18" ValueChanged="RewardAudioActionRate_ValueChanged" Minimum="-10"/>
-                                            <Label Content="Голос" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,100" Padding="2,2,2,2"/>
-                                                <ComboBox x:Name="RewardActionVoice" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,30,0,0" Height="20" Width="80" SelectionChanged="ComboBox_SelectionChanged_1" SelectedIndex="0" Padding="6,1,5,3">
+                                            <Slider x:Name="RewardAudioActionVolume" HorizontalAlignment="Right" Margin="0,64,10,0" VerticalAlignment="Top" Orientation="Vertical" Height="60" Width="18" Maximum="100" ValueChanged="RewardAudioActionVolume_ValueChanged" Minimum="1" Value="50"/>
+                                            <Grid x:Name="RewardActionVoiceGrid"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,66,50,0" Visibility="Visible">
+                                                <Label Content="Speed" HorizontalAlignment="Right" Margin="0,21,20,0" VerticalAlignment="Top" Padding="0,0,0,0" MouseDown="Label_MouseDown" Height="16" RenderTransformOrigin="0.5,0.5" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Width="40">
+                                                    <Label.RenderTransform>
+                                                        <TransformGroup>
+                                                            <ScaleTransform/>
+                                                            <SkewTransform/>
+                                                            <RotateTransform Angle="-90"/>
+                                                            <TranslateTransform X="0" Y="0"/>
+                                                        </TransformGroup>
+                                                    </Label.RenderTransform>
+                                                </Label>
+                                                <Slider x:Name="RewardAudioActionRate" HorizontalAlignment="Right" Margin="0,-2,10,0" VerticalAlignment="Top" Orientation="Vertical" Height="60" Width="18" ValueChanged="RewardAudioActionRate_ValueChanged" Minimum="-10"/>
+                                                <Label Content="Голос" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,100" Padding="2,2,2,2"/>
+                                                <ComboBox x:Name="RewardActionVoice" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Height="20" Width="80" SelectionChanged="ComboBox_SelectionChanged_1" SelectedIndex="0" Padding="6,1,5,3">
                                                     <ComboBoxItem Content="Алена"/>
                                                     <ComboBoxItem Content="Филипп"/>
                                                     <ComboBoxItem Content="Элис"/>
                                                     <ComboBoxItem Content="Джейн"/>
-                                                    <ComboBoxItem Content="Оксана"/>
                                                     <ComboBoxItem Content="Омаж"/>
                                                     <ComboBoxItem Content="Захар"/>
                                                     <ComboBoxItem Content="Ермил"/>
@@ -135,35 +138,59 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="Настройки" Padding="5,0,5,0" Margin="-1,1,0,0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Content="Выйти из twitch и закрыть" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Padding="3,1,3,1" Click="Button_Click" Grid.Column="2"/>
-                        <CheckBox x:Name="Settings_MinimizeToTray" Content="Сворачивать в трей" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Grid.Column="2" Click="Settings_MinimizeToTray_Click"/>
-
+                    <Grid Margin="-3,-2,-3,-3">
+                        <TabControl TabStripPlacement="Left" Margin="1,20,0,0" Padding="0,0,0,0" SelectedIndex="0" >
+                            <TabItem Header="Twitch" Margin="0" IsSelected="True">
+                                <Grid>
+                                    <Button Content="Выйти из twitch и закрыть" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Padding="3,1,3,1" Click="Button_Click" Grid.Column="2"/>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Система" Margin="0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox x:Name="Settings_MinimizeToTray" Content="Сворачивать в трей" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="Settings_MinimizeToTray_Click"/>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="Горячие клавиши" Margin="0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Content="Отсановить воспроизведение" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,10,10,0" Padding="2,2,2,2" Height="20"/>
+                                    <TextBox x:Name="HotkeySelector1" IsReadOnly="True" VerticalAlignment="Top" Margin="243,10,29,0" Height="20" Grid.ColumnSpan="2" KeyUp="TextBox_KeyUp" KeyDown="TextBox_KeyDown"/>
+                                    <Button Content="␡" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right" Height="20" Width="20" Margin="0,10,10,0" Click="Button_Click_5"/>
+                                </Grid>
+                            </TabItem>
+                        </TabControl>
+                        <Label x:Name="VersionLabel" Content="v0.0.0.1" VerticalAlignment="Top" HorizontalContentAlignment="Right" Padding="2,2,5,2"/>
                     </Grid>
                 </TabItem>
             </TabControl>
-            <Grid x:Name="FullWindowBanner" Visibility="Collapsed">
+            <Grid x:Name="FullWindowBanner" Visibility="Collapsed" UseLayoutRounding="True" ScrollViewer.CanContentScroll="True">
                 <Rectangle HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Fill="{DynamicResource BackgroundColour}" Stroke="{DynamicResource BackgroundColour}"/>
                 <Grid x:Name="LoginGrid" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                     <Label Content="Вход через Twitch" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Center" Padding="0,0,0,0" Height="16"/>
                     <Button x:Name="LoginButton" Content="Войти" HorizontalAlignment="Left" Margin="120,10,10,10" VerticalAlignment="Center" Padding="5,0,5,1" Click="Login_Click" Height="19" Grid.Column="1"/>
                 </Grid>
                 <Grid x:Name="PleaseWaitGrid" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <ProgressBar x:Name="HeaderProgressBar" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="21" IsIndeterminate="True" Margin="0,0,40,0" />
+                    <ProgressBar x:Name="HeaderProgressBar" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="21" IsIndeterminate="True" Margin="-1,-1,39,0" />
                     <Label x:Name="WaitLabel" Content="Загрузка..." HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Grid>
-                <Rectangle VerticalAlignment="Top" Height="21" Stroke="#FF4F4F4F" Margin="0,0,0,0" MouseDown="Window_MouseDown" Fill="#19191919"/>
+                <Rectangle VerticalAlignment="Top" Height="21" Stroke="#FF4F4F4F" Margin="-1,-1,-1,0" MouseDown="Window_MouseDown" Fill="#19191919"/>
             </Grid>
+            <Rectangle VerticalAlignment="Stretch" Stroke="#FF4F4F4F" Margin="-1,-1,0,-1" MouseDown="Window_MouseDown" Fill="#19191919" Width="1" HorizontalAlignment="Left"/>
+            <Rectangle VerticalAlignment="Stretch" Stroke="#FF4F4F4F" Margin="-1,-1,-1,-1" MouseDown="Window_MouseDown" Fill="#19191919" Width="1" HorizontalAlignment="Right"/>
+            <Rectangle VerticalAlignment="Top" Height="1" Stroke="#FF4F4F4F" Margin="-1,-1,0,0" MouseDown="Window_MouseDown" Fill="#19191919"/>
+            <Rectangle VerticalAlignment="Bottom" Height="1" Stroke="#FF4F4F4F" Margin="-1,-1,-1,-1" MouseDown="Window_MouseDown" Fill="#19191919"/>
             <Image HorizontalAlignment="Left" VerticalAlignment="Top" Width="25" Height="25" Margin="3,-2,0,0" Source="/Icon.ico" Stretch="UniformToFill" FlowDirection="LeftToRight" ScrollViewer.VerticalScrollBarVisibility="Disabled" StretchDirection="Both" MouseDown="Window_MouseDown" />
             <TextBlock Text="TwitchBotV2" Margin="26,0,5,0" Padding="6,2,6,2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" MouseDown="Window_MouseDown"/>
-            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="X" Height="21" Width="21" Click="Button_Click_1"/>
-            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="_" Height="21" Width="21" Margin="0,0,20,0" Click="Button_Click_2"/>
-            <Rectangle x:Name="MyBorder" VerticalAlignment="Stretch" Stroke="#FF4F4F4F" Margin="0,0,0,0" Visibility="Collapsed"/>
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="X" Height="21" Width="21" Click="Button_Click_1" Margin="0,-1,-1,0"/>
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="_" Height="21" Width="21" Margin="0,-1,19,0" Click="Button_Click_2"/>
+
         </Grid>
     </Border>
 </Window>

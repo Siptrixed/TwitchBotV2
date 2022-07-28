@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace TwitchBotV2.Model
+namespace TwitchBotV2.Model.Utils
 {
     public static class MyAppExt
     {

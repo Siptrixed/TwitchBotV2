@@ -19,14 +19,14 @@ namespace TwitchBotV2.Model.UserScript.Actions
     {
         public MyScriptActionType Type { get; set; }
 
-        public abstract void Invoke(MyCallableUserScript context, TwitchClient client);
+        public abstract void Invoke(MyCallableUserScript context, TwitchClient client, RewardEventArgs Redeem);
 
         public override string ToString()
         {
             return $"Action ({Type})";
         }
         
-        internal string ComposeText(MyCallableUserScript context, string text)
+        internal string ComposeText(MyCallableUserScript context, string text, RewardEventArgs Redeem)
         {
             foreach(Match match in Regex.Matches(text, @"\{([\.\w]*)\}"))
             {
@@ -34,7 +34,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
                 {
                     var key = match.Groups[1].Value;
                     if(RedeemAvailableVariables.ContainsKey(key))
-                        text = text.Replace($"{{{key}}}", RedeemAvailableVariables[key].Invoke(context.Redeem));
+                        text = text.Replace($"{{{key}}}", RedeemAvailableVariables[key].Invoke(Redeem));
                 }
             }
             return text;

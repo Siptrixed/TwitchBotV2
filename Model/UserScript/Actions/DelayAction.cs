@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TwitchBotV2.Model.Twitch;
+using TwitchBotV2.Model.Twitch.EventArgs;
+using TwitchBotV2.Model.Utils;
 
 namespace TwitchBotV2.Model.UserScript.Actions
 {
@@ -17,7 +19,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
             Delay = delay;
             Type = type;
         }
-        public override void Invoke(MyCallableUserScript context, TwitchClient client)
+        public override void Invoke(MyCallableUserScript context, TwitchClient client, RewardEventArgs Redeem)
         {
             switch (Type)
             {

@@ -18,6 +18,7 @@ namespace TwitchBotV2.Model.Utils
         public static MediaPlayer Player;
         public static int MediaDurationMs;
         public static SpeechSynthesizer SpeechSynth = new SpeechSynthesizer();
+        public static bool PlayerIsPlaying;
 
         static AudioHelper()
         {
@@ -25,12 +26,32 @@ namespace TwitchBotV2.Model.Utils
             {
                 Player = new MediaPlayer();
                 Player.MediaOpened += Player_MediaOpened;
+                Player.MediaEnded += Player_MediaEnded;
+                Player.MediaFailed += Player_MediaFailed;
             });
         }
 
+        private static void Player_MediaFailed(object? sender, ExceptionEventArgs e)
+        {
+            StopPlayer();
+        }
+
+        private static void Player_MediaEnded(object? sender, EventArgs e)
+        {
+            PlayerIsPlaying = false;
+            Player.Close();
+        }
+
+        public static void StopPlayer()
+        {
+            PlayerIsPlaying = false;
+            Player?.Stop();
+            Player?.Close();
+        }
         private static void Player_MediaOpened(object? sender, EventArgs e)
         {
             MediaDurationMs = (int)(Player.NaturalDuration.HasTimeSpan ? Player.NaturalDuration.TimeSpan.TotalMilliseconds : 0);
+            Player.Play();
         }
 
         public static void TextToSpeech(string Text)
@@ -59,7 +80,7 @@ namespace TwitchBotV2.Model.Utils
             }
         }
 
-        public static void GetTrueTTSReady(string text, string voice = "alena", string emotion = "good", bool lastInvoke = false)
+        public static void GetTrueTTSReady(string text, string voice = "alena", string emotion = "neutral", bool lastInvoke = false)
         {
             DynamicObject setts = DynamicObject.CreateObject();
             setts["message"] = text;
@@ -137,24 +158,20 @@ namespace TwitchBotV2.Model.Utils
                 while (SpeechSynth.State == SynthesizerState.Speaking);
                 return;
             }
-            MyAppExt.InvokeUI(() =>
+            lock (SpeechSynth)
             {
-                //Uri File = new Uri(path, UriKind.Absolute);
-                /*if (!MySave.Current.Bools[0])
+                MyAppExt.InvokeUI(() =>
                 {
-                    return;
-                }*/
-                Player.Open(new Uri("./TwitchBot-TrueTTS.wav", UriKind.Relative));
-                Player.Open(new Uri(path, UriKind.Absolute));
-                //Player.Volume = MySave.Current.Nums[4] / 100d;
-                Player.Play();
-            });
-            Thread.Sleep(1000);
-            Thread.Sleep(MediaDurationMs);
-            MyAppExt.InvokeUI(() =>
-            {
-                Player.Close();
-            });
+                    Player.Open(new Uri("./TwitchBot-TrueTTS.wav", UriKind.Relative));
+                    Player.Open(new Uri(path, UriKind.Absolute));
+                });
+                Thread.Sleep(1000);
+                do
+                {
+                    Thread.Sleep(100);
+                }
+                while (PlayerIsPlaying);
+            }
             if (File.Exists(path)) File.Delete(path);
             TrueTTSReady = false;
         }
