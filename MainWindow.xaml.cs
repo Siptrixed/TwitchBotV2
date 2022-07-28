@@ -51,7 +51,8 @@ namespace TwitchBotV2
                 = RewardEditGrid.Visibility = Visibility.Hidden;
             VersionLabel.Content = $"v{VersionControl.Version}";
             FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Visible;
-            HotkeySelector1.Text = GlobalModel.Settings.ISSHotkey.ToString();
+            HotkeySelector1.Text = GlobalModel.Settings.ISSHotkey?.ToString();
+            Activate();
             Task.Run(async () => {
                 var version = await VersionControl.CheckVersion();
                 if (version != null)
