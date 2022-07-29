@@ -132,7 +132,7 @@
                             <Label Content="Действия:" HorizontalAlignment="Left" Margin="10,91,0,0" VerticalAlignment="Top" Padding="2,2,2,2" Grid.Column="1"/>
                         </Grid>
                         <ListBox x:Name="Reward_ScriptActions" d:ItemsSource="{d:SampleData ItemCount=5}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch" Margin="10,111,250,-1" BorderBrush="#FF4F4F4F" Grid.Column="1" SelectionChanged="Reward_ScriptActions_SelectionChanged" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
-                        <Label x:Name="RewardSkipQueueAttention" Content="Эта награда не пропускает очередь запросов!" Padding="0,0,0,0" Margin="10,65,0,0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Red" Visibility="Visible"/>
+                        <Label x:Name="RewardSkipQueueAttention" Content="Эта награда не пропускает очередь запросов!" Padding="0,0,0,0" Margin="10,65,0,0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Red" Visibility="Collapsed"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Настройки" Padding="5,0,5,0" Margin="-1,1,0,0">
