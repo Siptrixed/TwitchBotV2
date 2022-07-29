@@ -173,8 +173,7 @@ namespace TwitchBotV2
             {
                 Reward_Title.Content = reward.Title;
                 Reward_Prompt.Text = reward.Prompt;
-                Reward_ID.Content = reward.ID;
-                Reward_Cost.Content = $"{reward.Cost} cp";
+                Reward_Cost.Content = $"{reward.Cost}cp";
                 Reward_ScriptActions.ItemsSource = reward.Script.Actions;
                 Reward_ScriptActions.Visibility = RewardEditGrid.Visibility = Visibility.Visible;
                 Reward_ExecuteAsync.IsChecked = reward.Script.IsAsync;
@@ -182,7 +181,7 @@ namespace TwitchBotV2
             }
             else
             {
-                Reward_Cost.Content = Reward_ID.Content = Reward_Title.Content = Reward_Prompt.Text = "";
+                Reward_Cost.Content= Reward_Title.Content = Reward_Prompt.Text = "";
                 Reward_ExecuteAsync.IsChecked = false;
                 Reward_ScriptActions.ItemsSource = null;
                 Reward_ScriptActions.Visibility = RewardEditGrid.Visibility = Visibility.Hidden;
