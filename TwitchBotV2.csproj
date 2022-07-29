@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<VersionPrefix>0.0.0.1</VersionPrefix>
+	<VersionPrefix>0.0.0.2</VersionPrefix>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
@@ -15,6 +15,9 @@
     <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
     <FileVersion>$(VersionPrefix)</FileVersion>
     <NeutralLanguage>ru-RU</NeutralLanguage>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <DelaySign>False</DelaySign>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
