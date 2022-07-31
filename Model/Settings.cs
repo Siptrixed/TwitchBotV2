@@ -17,7 +17,7 @@ namespace TwitchBotV2.Model
         public bool MinimizeToTray { get; set; }
         public string YandexToken { get; set; }
         public WinHotkeyData? ISSHotkey { get; set; }
-        public TrueTTSVoices DefaultVoice { get; set; } = TrueTTSVoices.@default;
+        public TrueTTSVoices DefaultVoice { get; set; } = TrueTTSVoices.alena;
         public byte DefaultVolume { get; set; } = 50;
         public int DefaultRate { get; set; } = 0;
     }
