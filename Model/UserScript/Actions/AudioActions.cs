@@ -17,8 +17,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
         public string Text { get; set; }
         public byte Volume { get; set; } = 50;
         public int Rate { get; set; } = 0;
-        public TrueTTSVoices Voice { get; set; } = TrueTTSVoices.alena;
-        public string Emotion { get; set; }
+        public TrueTTSVoices Voice { get; set; } = TrueTTSVoices.@default;
         public AudioActions(string text, MyScriptActionType type = MyScriptActionType.PlayAudio)
         {
             Text = text;
@@ -33,8 +32,8 @@ namespace TwitchBotV2.Model.UserScript.Actions
                     {
                         MyAppExt.InvokeUI(() =>
                         {
-                            AudioHelper.SpeechSynth.Rate = Rate;
-                            AudioHelper.SpeechSynth.Volume = Volume;
+                            AudioHelper.SpeechSynth.Rate = (int)((Rate * 0.7 + GlobalModel.Settings.DefaultRate * 1.3) / 2);
+                            AudioHelper.SpeechSynth.Volume = (int)((Volume * 0.7 + GlobalModel.Settings.DefaultVolume * 1.3) / 2);
                         });
                         AudioHelper.TextToSpeech(ComposeText(context, Text, Redeem));
                         do
@@ -48,11 +47,11 @@ namespace TwitchBotV2.Model.UserScript.Actions
                     lock (AudioHelper.SpeechSynth)
                     {
                         MyAppExt.InvokeUI(() => {
-                            AudioHelper.SpeechSynth.Rate = Rate;
-                            AudioHelper.Player.Volume = Volume / 100d;
+                            AudioHelper.SpeechSynth.Rate = (int)((Rate * 0.7 + GlobalModel.Settings.DefaultRate * 1.3) / 2);// : GlobalModel.Settings.DefaultRate;
+                            AudioHelper.Player.Volume = (Volume * 0.7 + GlobalModel.Settings.DefaultVolume * 1.3) / 200d;
                         });
                         var text = ComposeText(context, Text, Redeem);
-                        AudioHelper.GetTrueTTSReady(text, Voice.ToString());
+                        AudioHelper.GetTrueTTSReady(text, Voice == TrueTTSVoices.@default? GlobalModel.Settings.DefaultVoice.ToString() : Voice.ToString());
                         AudioHelper.TrueTTS(text);
                     }
                     break;
@@ -61,7 +60,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
                     {
                         MyAppExt.InvokeUI(() =>
                         {
-                            AudioHelper.Player.Volume = Volume / 100d;
+                            AudioHelper.Player.Volume = (Volume  * 0.7 + GlobalModel.Settings.DefaultVolume * 1.3) / 200d;
                             AudioHelper.Player.Open(new Uri(Text, UriKind.Absolute));
                             AudioHelper.Player.Play();
                         });

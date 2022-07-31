@@ -22,7 +22,7 @@ namespace TwitchBotV2.Model.Localhost.Services
             {
                 string token = request.QueryString["access_token"] ?? "SCHMOOPIIE";
                 GlobalModel.TwithcAccountAuthorized?.Invoke(WebServer.Host, token);
-                return "<script>window.close();</script>";
+                return "Закройте пожалуйста окно если оно не закрылось автоматически!<script>window.close();</script>";
             }
         }
     }

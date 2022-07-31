@@ -38,6 +38,7 @@ namespace TwitchBotV2
         #region Construct
         public TwitchClient Client;
         private TaskbarIcon tbi = new TaskbarIcon();
+        bool Initialized = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -52,6 +53,9 @@ namespace TwitchBotV2
             VersionLabel.Content = $"v{VersionControl.Version}";
             FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Visible;
             HotkeySelector1.Text = GlobalModel.Settings.ISSHotkey?.ToString();
+            DefaultVoice.SelectedIndex = (int)(GlobalModel.Settings.DefaultVoice - 1);
+            DefaultRate.Value = GlobalModel.Settings.DefaultRate;
+            DefaultVolume.Value = GlobalModel.Settings.DefaultVolume;
             Activate();
             Task.Run(async () => {
                 var version = await VersionControl.CheckVersion();
@@ -214,6 +218,7 @@ namespace TwitchBotV2
                     FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
                     InitBotLogic();
                     MainTabControl.SelectedIndex = 0;
+                    Initialized = true;
                 });
             }
             else Process.Start(new ProcessStartInfo(TwitchConsts.GetAuthURL()) { UseShellExecute = true });
@@ -659,6 +664,23 @@ namespace TwitchBotV2
         {
             GlobalModel.ClearISSHotKey();
             HotkeySelector1.Text = "";
+        }
+
+        private void DefaultVoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Initialized) GlobalModel.Settings.DefaultVoice = (TrueTTSVoices)(DefaultVoice.SelectedIndex+1);
+        }
+
+        private void DefaultVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Initialized) GlobalModel.Settings.DefaultVolume = (byte)DefaultVolume.Value;
+            DefaultVolumeLabel.Content = $"{GlobalModel.Settings.DefaultVolume}%";
+        }
+
+        private void DefaultRate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Initialized) GlobalModel.Settings.DefaultRate = (int)DefaultRate.Value;
+            DefaultRateLabel.Content = $"{(int)(AudioHelper.RateToSpeed(GlobalModel.Settings.DefaultRate)*100)}%";
         }
     }
     #endregion

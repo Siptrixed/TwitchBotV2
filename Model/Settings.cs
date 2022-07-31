@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TwitchBotV2.Model.DataModel;
+using TwitchBotV2.Model.Utils;
 using TwitchBotV2.Model.WinApi;
 
 namespace TwitchBotV2.Model
@@ -16,5 +17,8 @@ namespace TwitchBotV2.Model
         public bool MinimizeToTray { get; set; }
         public string YandexToken { get; set; }
         public WinHotkeyData? ISSHotkey { get; set; }
+        public TrueTTSVoices DefaultVoice { get; set; } = TrueTTSVoices.@default;
+        public byte DefaultVolume { get; set; } = 50;
+        public int DefaultRate { get; set; } = 0;
     }
 }

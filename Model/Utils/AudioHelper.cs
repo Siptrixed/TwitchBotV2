@@ -66,17 +66,18 @@ namespace TwitchBotV2.Model.Utils
             }).Start();
         }
 
-        public static float RateToSpeed()
+        public static float RateToSpeed(int Rate = int.MinValue)
         {
-            if (SpeechSynth.Rate == 0)
+            if (Rate == int.MinValue) Rate = SpeechSynth.Rate;
+            if (Rate == 0)
                 return 1;
-            else if (SpeechSynth.Rate > 0)
+            else if (Rate > 0)
             {
-                return (float)(1 + (SpeechSynth.Rate * 0.1));
+                return (float)(1 + (Rate * 0.1));
             }
             else
             {
-                return (float)(1 - ((SpeechSynth.Rate * -1d) / 20d));
+                return (float)(1 - ((Rate * -1d) / 20d));
             }
         }
 
