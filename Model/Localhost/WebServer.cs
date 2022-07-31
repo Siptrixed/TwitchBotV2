@@ -22,11 +22,14 @@ namespace TwitchBotV2.Model.Localhost
                 {
                     foreach (var meth in service.GetMethods())
                     {
-                        var pars = meth.GetParameters();
-                        if (pars.Length == 1 && meth.ReturnParameter.ParameterType == typeof(string) &&
-                            pars[0].ParameterType == typeof(HttpListenerRequest) && meth.IsStatic && !meth.IsConstructor)
+                        if (meth.GetCustomAttributes(typeof(WebMethodAttribute), true).Length > 0)
                         {
-                            Services.Add($"{service.Name}/{meth.Name}", meth);
+                            var pars = meth.GetParameters();
+                            if (pars.Length == 1 && meth.ReturnParameter.ParameterType == typeof(string) &&
+                                pars[0].ParameterType == typeof(HttpListenerRequest) && meth.IsStatic && !meth.IsConstructor)
+                            {
+                                Services.Add($"{service.Name}/{meth.Name}", meth);
+                            }
                         }
                     }
                 }
@@ -106,6 +109,7 @@ namespace TwitchBotV2.Model.Localhost
 
                                 var rstr = _responderMethod(ctx.Request);
                                 var buf = Encoding.UTF8.GetBytes(rstr);
+                                ctx.Response.ContentType = "text/html; charset=utf-8";
                                 ctx.Response.ContentLength64 = buf.Length;
                                 ctx.Response.OutputStream.Write(buf, 0, buf.Length);
                             }

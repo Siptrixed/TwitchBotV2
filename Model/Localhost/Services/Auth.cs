@@ -12,6 +12,7 @@ namespace TwitchBotV2.Model.Localhost.Services
     [WebService]
     public static class Auth
     {
+        [WebMethod]
         public static string Token(HttpListenerRequest request)
         {
             if (string.IsNullOrEmpty(request.Url?.Query))

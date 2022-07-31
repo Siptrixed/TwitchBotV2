@@ -12,8 +12,8 @@ namespace TwitchBotV2.Model.Utils
 {
     public static class ObjectFileSystem
     {
-        public static string AppFile => System.Reflection.Assembly.GetExecutingAssembly().Location;
-        public static string? AppDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        public static string AppFile => $"{AppContext.BaseDirectory}TwitchBotV2.exe";
+        public static string? AppDirectory => Path.GetDirectoryName(AppContext.BaseDirectory);
         public static bool TrySaveObjToFile<T>(string filename, T obj)
         {
             try

@@ -38,7 +38,7 @@ namespace TwitchBotV2
         #region Construct
         public TwitchClient Client;
         private TaskbarIcon tbi = new TaskbarIcon();
-        bool Initialized = false;
+        bool IsTwitchInitialized = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -161,37 +161,6 @@ namespace TwitchBotV2
             GC.WaitForPendingFinalizers();
             MyAppExt.InvokeUI(() => { Reward_list.ItemsSource = GlobalModel.Settings.CustomRewards; RewardListUpdateButton.IsEnabled = true; });
         }
-
-        private void UpdateRewardButtonClick(object sender, RoutedEventArgs e)
-        {
-            Reward_list.ItemsSource = null;
-            RewardListUpdateButton.IsEnabled = false;
-            Task.Run(async () =>
-            {
-                await UpdateRewards();
-            });
-        }
-        private void UpdateRewardSector(string? rewardId = null, MyRewardInfo? reward = null)
-        {
-            if (!string.IsNullOrEmpty(rewardId))
-            {
-                Reward_Title.Content = reward.Title;
-                Reward_Prompt.Text = reward.Prompt;
-                Reward_Cost.Content = $"{reward.Cost}cp";
-                Reward_ScriptActions.ItemsSource = reward.Script.Actions;
-                Reward_ScriptActions.Visibility = RewardEditGrid.Visibility = Visibility.Visible;
-                Reward_ExecuteAsync.IsChecked = reward.Script.IsAsync;
-                RewardSkipQueueAttention.Visibility = reward.RequaredApply ? Visibility.Visible : Visibility.Collapsed;
-            }
-            else
-            {
-                Reward_Cost.Content= Reward_Title.Content = Reward_Prompt.Text = "";
-                Reward_ExecuteAsync.IsChecked = false;
-                Reward_ScriptActions.ItemsSource = null;
-                Reward_ScriptActions.Visibility = RewardEditGrid.Visibility = Visibility.Hidden;
-                RewardSkipQueueAttention.Visibility = Visibility.Collapsed;
-            }
-        }
         #endregion
 
         #region Authorization
@@ -211,6 +180,7 @@ namespace TwitchBotV2
         }
         private void TwitchInitialized(object? sender, bool e)
         {
+            if (IsTwitchInitialized) return;
             if (e)
             {
                 MyAppExt.InvokeUI(() =>
@@ -218,7 +188,7 @@ namespace TwitchBotV2
                     FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
                     InitBotLogic();
                     MainTabControl.SelectedIndex = 0;
-                    Initialized = true;
+                    IsTwitchInitialized = true;
                 });
             }
             else Process.Start(new ProcessStartInfo(TwitchConsts.GetAuthURL()) { UseShellExecute = true });
@@ -251,6 +221,36 @@ namespace TwitchBotV2
         #endregion
 
         #region WindowLogic
+        private void UpdateRewardButtonClick(object sender, RoutedEventArgs e)
+        {
+            Reward_list.ItemsSource = null;
+            RewardListUpdateButton.IsEnabled = false;
+            Task.Run(async () =>
+            {
+                await UpdateRewards();
+            });
+        }
+        private void UpdateRewardSector(string? rewardId = null, MyRewardInfo? reward = null)
+        {
+            if (!string.IsNullOrEmpty(rewardId))
+            {
+                Reward_Title.Content = reward.Title;
+                Reward_Prompt.Text = reward.Prompt;
+                Reward_Cost.Content = $"{reward.Cost}cp";
+                Reward_ScriptActions.ItemsSource = reward.Script.Actions;
+                Reward_ScriptActions.Visibility = RewardEditGrid.Visibility = Visibility.Visible;
+                Reward_ExecuteAsync.IsChecked = reward.Script.IsAsync;
+                RewardSkipQueueAttention.Visibility = reward.RequaredApply ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else
+            {
+                Reward_Cost.Content = Reward_Title.Content = Reward_Prompt.Text = "";
+                Reward_ExecuteAsync.IsChecked = false;
+                Reward_ScriptActions.ItemsSource = null;
+                Reward_ScriptActions.Visibility = RewardEditGrid.Visibility = Visibility.Hidden;
+                RewardSkipQueueAttention.Visibility = Visibility.Collapsed;
+            }
+        }
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -668,18 +668,18 @@ namespace TwitchBotV2
 
         private void DefaultVoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Initialized) GlobalModel.Settings.DefaultVoice = (TrueTTSVoices)(DefaultVoice.SelectedIndex+1);
+            if (IsTwitchInitialized) GlobalModel.Settings.DefaultVoice = (TrueTTSVoices)(DefaultVoice.SelectedIndex+1);
         }
 
         private void DefaultVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (Initialized) GlobalModel.Settings.DefaultVolume = (byte)DefaultVolume.Value;
+            if (IsTwitchInitialized) GlobalModel.Settings.DefaultVolume = (byte)DefaultVolume.Value;
             DefaultVolumeLabel.Content = $"{GlobalModel.Settings.DefaultVolume}%";
         }
 
         private void DefaultRate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (Initialized) GlobalModel.Settings.DefaultRate = (int)DefaultRate.Value;
+            if (IsTwitchInitialized) GlobalModel.Settings.DefaultRate = (int)DefaultRate.Value;
             DefaultRateLabel.Content = $"{(int)(AudioHelper.RateToSpeed(GlobalModel.Settings.DefaultRate)*100)}%";
         }
     }

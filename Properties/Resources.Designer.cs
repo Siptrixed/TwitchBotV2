@@ -69,5 +69,14 @@ namespace TwitchBotV2.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Виджет пока не готов.
+        /// </summary>
+        internal static string WidgetTimers {
+            get {
+                return ResourceManager.GetString("WidgetTimers", resourceCulture);
+            }
+        }
     }
 }
