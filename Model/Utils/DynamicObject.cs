@@ -169,7 +169,7 @@ namespace TwitchBotV2.Model.Utils
         }
         public static implicit operator DynamicObject(decimal obj) => new DynamicObject(obj);
 
-        public static implicit operator string(DynamicObject obj) => obj.ToString();
+        public static implicit operator string(DynamicObject obj) => obj?.ToString();
         public static implicit operator DynamicObject(string obj) => new DynamicObject(obj);
         public static implicit operator DateTime(DynamicObject obj)
         {

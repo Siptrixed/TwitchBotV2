@@ -13,6 +13,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
         PlayAudio, 
         Speech,
         ShellComand,
-        SpeechTrueTTS
+        SpeechTrueTTS,
+        OBSAction
     }
 }

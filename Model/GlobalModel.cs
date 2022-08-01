@@ -57,7 +57,7 @@ namespace TwitchBotV2.Model
             ImmediatelyStopSound = new WinHotkey(key, mod, StopSoundPlays);
         }
 
-        private static void StopSoundPlays(WinHotkey sender)
+        public static void StopSoundPlays(WinHotkey? sender)
         {
             MyAppExt.InvokeUI(() =>
             {

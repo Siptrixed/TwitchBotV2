@@ -19,14 +19,14 @@ namespace TwitchBotV2.Model.UserScript.Actions
     {
         public MyScriptActionType Type { get; set; }
 
-        public abstract void Invoke(MyCallableUserScript context, TwitchClient client, RewardEventArgs Redeem);
+        public abstract void Invoke(TwitchClient client, MyScriptExecuteContext context);
 
         public override string ToString()
         {
             return $"Action ({Type})";
         }
         
-        internal string ComposeText(MyCallableUserScript context, string text, RewardEventArgs Redeem)
+        internal string ComposeText(MyScriptExecuteContext context, string text)
         {
             foreach(Match match in Regex.Matches(text, @"\{([\.\w]*)\}"))
             {
@@ -34,17 +34,15 @@ namespace TwitchBotV2.Model.UserScript.Actions
                 {
                     var key = match.Groups[1].Value;
                     if(RedeemAvailableVariables.ContainsKey(key))
-                        text = text.Replace($"{{{key}}}", RedeemAvailableVariables[key].Invoke(Redeem));
+                        text = text.Replace($"{{{key}}}", RedeemAvailableVariables[key].Invoke(context));
+                    else if(context.StringVars.ContainsKey(key))
+                        text = text.Replace($"{{{key}}}", context.StringVars[key]);
                 }
             }
             return text;
         }
-        internal static readonly Dictionary<string, Func<RewardEventArgs,string>> RedeemAvailableVariables = new Dictionary<string, Func<RewardEventArgs, string>>() {
-            { "date", (x)=> DateTime.Now.ToShortDateString() },
-            { "redeem.text", (x)=> x.Text },
-            { "redeem.user", (x)=> x.NickName },
-            { "reward.title", (x)=> x.Title },
-            { "reward.channel", (x)=> x.Chanel },
+        internal static readonly Dictionary<string, Func<MyScriptExecuteContext, string>> RedeemAvailableVariables = new Dictionary<string, Func<MyScriptExecuteContext, string>>() {
+            { "date", (x)=> DateTime.Now.ToShortDateString() }
         };
     }
 }

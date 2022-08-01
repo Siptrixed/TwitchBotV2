@@ -18,15 +18,15 @@ namespace TwitchBotV2.Model.UserScript.Actions
             Type = type;
         }
         public string Text { get; set; }
-        public override void Invoke(MyCallableUserScript context, TwitchClient client, RewardEventArgs Redeem)
+        public override void Invoke(TwitchClient client, MyScriptExecuteContext context)
         {
             switch (Type)
             {
                 case MyScriptActionType.SendMessage:
-                    client.SendMessage(ComposeText(context, Text, Redeem));
+                    client.SendMessage(ComposeText(context, Text));
                     break;
                 case MyScriptActionType.ShellComand:
-                    MyAppExt.RunCMD(ComposeText(context, Text, Redeem));
+                    MyAppExt.RunCMD(ComposeText(context, Text));
                     break;
             }
         }

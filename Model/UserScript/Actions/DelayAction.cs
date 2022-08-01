@@ -19,7 +19,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
             Delay = delay;
             Type = type;
         }
-        public override void Invoke(MyCallableUserScript context, TwitchClient client, RewardEventArgs Redeem)
+        public override void Invoke(TwitchClient client, MyScriptExecuteContext context)
         {
             switch (Type)
             {

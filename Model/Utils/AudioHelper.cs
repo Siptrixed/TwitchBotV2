@@ -19,7 +19,7 @@ namespace TwitchBotV2.Model.Utils
         public static int MediaDurationMs;
         public static SpeechSynthesizer SpeechSynth = new SpeechSynthesizer();
         public static bool PlayerIsPlaying;
-
+        public static string CurrentPlayingMessage = "";
         static AudioHelper()
         {
             MyAppExt.InvokeUI(() =>

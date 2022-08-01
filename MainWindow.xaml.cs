@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -116,7 +117,7 @@ namespace TwitchBotV2
             if (GlobalModel.Settings.CustomRewards.ContainsKey(e.CustomRewardID))
             {
                 var script = GlobalModel.Settings.CustomRewards[e.CustomRewardID].Script;
-                script.Invoke(Client, e);
+                script.Invoke(Client, new MyScriptExecuteContext(e));
             }
         }
 
@@ -124,25 +125,35 @@ namespace TwitchBotV2
         {
             foreach (var redeem in MyCallableUserScript.Queue)
             {
-                if (redeem.LinkedMessage != null && redeem.LinkedMessage.ID == e.MessageID)
+                if (redeem.MsgId != null && redeem.MsgId == e.MessageID)
                 {
-                    redeem.IsRemoved = true;
+                    redeem.IsCanceled = true;
                     break;
                 }
+            }
+            if (AudioHelper.CurrentPlayingMessage == e.MessageID)
+            {
+                GlobalModel.StopSoundPlays(null);
             }
         }
 
         private void TwitchMessageNew(object? sender, MessageRecivedEventArgs e)
         {
-            foreach (var redeem in MyCallableUserScript.Queue)
+            if (!string.IsNullOrEmpty(e.CustomRewardID))
             {
-                if (redeem.CustomRewardID == e.CustomRewardID && e.UserID == redeem.UserID && redeem.LinkedMessage == null)
+                for (var i = 0; i < 10; i++)
                 {
-                    redeem.LinkedMessage = e;
-                    break;
+                    foreach (var context in MyCallableUserScript.Queue)
+                    {
+                        if (context.Redeemption?.CustomRewardID == e.CustomRewardID && e.UserID == context.Redeemption?.UserID && context.Message == null)
+                        {
+                            context.Message = e;
+                            return;
+                        }
+                    }
+                    Thread.Sleep(50);
                 }
             }
-            if (e.Message == "Ping") Client.SendMessage("Pong");
         }
 
         private async Task UpdateRewards()
@@ -320,10 +331,10 @@ namespace TwitchBotV2
                             NewAction = new TextActions("echo привет", MyScriptActionType.ShellComand);
                             break;
                         case 3:
-                            NewAction = new AudioActions("{redeem.text}", MyScriptActionType.Speech);
+                            NewAction = new AudioActions("{text}", MyScriptActionType.Speech);
                             break;
                         case 4:
-                            NewAction = new AudioActions("{redeem.text}", MyScriptActionType.SpeechTrueTTS);
+                            NewAction = new AudioActions("{text}", MyScriptActionType.SpeechTrueTTS);
                             break;
                         case 5:
                             NewAction = new AudioActions("C:/", MyScriptActionType.PlayAudio);

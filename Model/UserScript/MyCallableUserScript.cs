@@ -16,30 +16,32 @@ namespace TwitchBotV2.Model.UserScript
         public bool IsEmpty => Actions.Count == 0;
         public List<MyScriptActionBase> Actions { get; set; } = new List<MyScriptActionBase>();
         public bool IsAsync { get; set; } = false;
-        public void Invoke(TwitchClient client, RewardEventArgs Redeem)
+        public void Invoke(TwitchClient client, MyScriptExecuteContext context)
         {
             Task.Run(() =>
             {
-                Queue.Add(Redeem);
+                Queue.Add(context);
+                Thread.Sleep(150);
                 if (IsAsync)
                 {
-                    Invoker(client, Redeem);
+                    Invoker(client, context);
                 }
                 else lock (this)
                     {
-                        Invoker(client, Redeem);
+                        Invoker(client, context);
                     }
-                Queue.Remove(Redeem);
+                Queue.Remove(context);
             });
         }
         [MessagePack.IgnoreMember]
-        public static List<RewardEventArgs> Queue = new List<RewardEventArgs>();
-        private void Invoker(TwitchClient client, RewardEventArgs Redeem)
+        public static List<MyScriptExecuteContext> Queue = new List<MyScriptExecuteContext>();
+        private void Invoker(TwitchClient client, MyScriptExecuteContext context)
         {
-            if (Redeem.IsRemoved) return;
+            if (context.IsCanceled) return;
             foreach (var act in Actions)
             {
-                act.Invoke(this, client, Redeem);
+                if (context.IsCanceled) return;
+                act.Invoke(client, context);
             }
         }
     }
