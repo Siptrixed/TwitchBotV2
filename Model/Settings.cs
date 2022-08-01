@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TwitchBotV2.Model.DataModel;
+using TwitchBotV2.Model.OBSConnection;
 using TwitchBotV2.Model.Utils;
 using TwitchBotV2.Model.WinApi;
 
@@ -20,5 +21,6 @@ namespace TwitchBotV2.Model
         public TrueTTSVoices DefaultVoice { get; set; } = TrueTTSVoices.alena;
         public byte DefaultVolume { get; set; } = 50;
         public int DefaultRate { get; set; } = 0;
+        public OBSConnectionInfo? OBSWebSockCI { get; set; }
     }
 }

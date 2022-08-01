@@ -11,7 +11,7 @@ namespace TwitchBotV2.Model.Utils
 {
     public static class MyAppExt
     {
-        public static void InvokeUI(Action act) => _ = Application.Current?.Dispatcher?.BeginInvoke(DispatcherPriority.Background, act);
+        public static DispatcherOperation? InvokeUI(Action act) => Application.Current?.Dispatcher?.BeginInvoke(DispatcherPriority.Background, act);
         public static void RunCMD(string scripd)
         {
             Process cmd = new Process();

@@ -34,7 +34,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
                         {
                             AudioHelper.SpeechSynth.Rate = (int)((Rate * 0.7 + GlobalModel.Settings.DefaultRate * 1.3) / 2);
                             AudioHelper.SpeechSynth.Volume = (int)((Volume * 0.7 + GlobalModel.Settings.DefaultVolume * 1.3) / 2);
-                        });
+                        })?.Wait();
                         AudioHelper.TextToSpeech(ComposeText(context, Text, Redeem));
                         do
                         {
@@ -49,7 +49,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
                         MyAppExt.InvokeUI(() => {
                             AudioHelper.SpeechSynth.Rate = (int)((Rate * 0.7 + GlobalModel.Settings.DefaultRate * 1.3) / 2);// : GlobalModel.Settings.DefaultRate;
                             AudioHelper.Player.Volume = (Volume * 0.7 + GlobalModel.Settings.DefaultVolume * 1.3) / 200d;
-                        });
+                        })?.Wait();
                         var text = ComposeText(context, Text, Redeem);
                         AudioHelper.GetTrueTTSReady(text, Voice == TrueTTSVoices.@default? GlobalModel.Settings.DefaultVoice.ToString() : Voice.ToString());
                         AudioHelper.TrueTTS(text);
@@ -63,7 +63,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
                             AudioHelper.Player.Volume = (Volume  * 0.7 + GlobalModel.Settings.DefaultVolume * 1.3) / 200d;
                             AudioHelper.Player.Open(new Uri(Text, UriKind.Absolute));
                             AudioHelper.Player.Play();
-                        });
+                        })?.Wait();
                         Thread.Sleep(1000);
                         do
                         {
@@ -76,7 +76,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
             }
         }
 
-        public override string? ToString()
+        public override string ToString()
         {
             switch (Type)
             {

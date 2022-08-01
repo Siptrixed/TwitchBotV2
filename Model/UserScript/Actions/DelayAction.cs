@@ -29,7 +29,7 @@ namespace TwitchBotV2.Model.UserScript.Actions
             }
         }
 
-        public override string? ToString()
+        public override string ToString()
         {
             switch (Type)
             {

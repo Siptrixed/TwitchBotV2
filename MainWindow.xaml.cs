@@ -43,6 +43,8 @@ namespace TwitchBotV2
         {
             InitializeComponent();
             WebServer.RunServer();
+            Model.OBSConnection.OBSWebSocket.OBSConnected += OBSConnected;
+            Model.OBSConnection.OBSWebSocket.Connect();
             tbi.Icon = Properties.Resources.Icon;
             tbi.ToolTipText = "TwitchBotV2";
             tbi.TrayLeftMouseUp += (x, y) => { Show(); Activate(); };
@@ -57,7 +59,8 @@ namespace TwitchBotV2
             DefaultRate.Value = GlobalModel.Settings.DefaultRate;
             DefaultVolume.Value = GlobalModel.Settings.DefaultVolume;
             Activate();
-            Task.Run(async () => {
+            _ = Task.Run(async () =>
+            {
                 var version = await VersionControl.CheckVersion();
                 if (version != null)
                 {
@@ -66,31 +69,39 @@ namespace TwitchBotV2
                     {
                         if (!VersionControl.UpdateNow())
                         {
-                            MyAppExt.InvokeUI(() =>
-                            {
-                                FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
-                                InitAuthorization();
-                            });
+                            _ = MyAppExt.InvokeUI(() =>
+                              {
+                                  FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
+                                  InitAuthorization();
+                              });
                         }
                     }
                     else
                     {
-                        MyAppExt.InvokeUI(() =>
-                        {
-                            FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
-                            InitAuthorization();
-                        });
+                        _ = MyAppExt.InvokeUI(() =>
+                          {
+                              FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
+                              InitAuthorization();
+                          });
                     }
                 }
                 else
                 {
-                    MyAppExt.InvokeUI(() =>
-                    {
-                        FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
-                        InitAuthorization();
-                    });
+                    _ = MyAppExt.InvokeUI(() =>
+                      {
+                          FullWindowBanner.Visibility = PleaseWaitGrid.Visibility = Visibility.Collapsed;
+                          InitAuthorization();
+                      });
                 }
             });
+        }
+
+        private void OBSConnected(object? sender, bool e)
+        {
+            if (e)
+            {
+
+            }
         }
         #endregion
 
